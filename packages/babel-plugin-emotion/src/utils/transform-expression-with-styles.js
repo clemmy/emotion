@@ -53,13 +53,6 @@ export let transformExpressionWithStyles = ({
       arg => arg.type !== 'SpreadElement'
     )
 
-    if (canAppendStrings && shouldLabel) {
-      const label = getLabelFromPath(path, state, t)
-      if (label) {
-        appendStringToArguments(path, `;label:${label};`, t)
-      }
-    }
-
     let isPure = true
 
     path.get('arguments').forEach(node => {
@@ -86,7 +79,7 @@ export let transformExpressionWithStyles = ({
       path.node.arguments.length === 1 &&
       t.isStringLiteral(path.node.arguments[0])
     ) {
-      let cssString = path.node.arguments[0].value
+      let cssString = path.node.arguments[0].value.replace(/;$/, '')
       let res = serializeStyles([cssString])
       let prodNode = t.objectExpression([
         t.objectProperty(t.identifier('name'), t.stringLiteral(res.name)),
@@ -109,6 +102,14 @@ export let transformExpressionWithStyles = ({
           cssObjectToString._compact = true
           state.file.path.unshiftContainer('body', [cssObjectToString])
         }
+
+        if (shouldLabel) {
+          const label = getLabelFromPath(path, state, t)
+          if (label) {
+            res = serializeStyles([`${cssString};label:${label}`])
+          }
+        }
+
         let devNode = t.objectExpression([
           t.objectProperty(t.identifier('name'), t.stringLiteral(res.name)),
           t.objectProperty(t.identifier('styles'), t.stringLiteral(res.styles)),
@@ -123,6 +124,14 @@ export let transformExpressionWithStyles = ({
 
       return { node, isPure: true }
     }
+
+    if (canAppendStrings && shouldLabel) {
+      const label = getLabelFromPath(path, state, t)
+      if (label) {
+        appendStringToArguments(path, `;label:${label};`, t)
+      }
+    }
+
     if (sourceMap) {
       let lastIndex = path.node.arguments.length - 1
       let last = path.node.arguments[lastIndex]

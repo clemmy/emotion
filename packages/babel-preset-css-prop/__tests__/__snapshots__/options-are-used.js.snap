@@ -48,8 +48,8 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 import * as React from 'react';
 import { jsx as ___EmotionJSX } from \\"@emotion/core\\";
 var _ref = {
-  name: \\"1a7y9g-__fixtures__--__fixtures__--Button\\",
-  styles: \\"color:hotpink;;label:__fixtures__--__fixtures__--Button;\\"
+  name: \\"3sn2xs\\",
+  styles: \\"color:hotpink\\"
 };
 export let Button = props => {
   return ___EmotionJSX(React.Fragment, null, ___EmotionJSX(\\"button\\", _extends({
